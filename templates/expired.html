@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Access Denied{% endblock %}
+{% block content %}
+<div class="card center">
+  <svg class="page-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin: 0 auto 12px;">
+    <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.6"/>
+    <path d="M8 11V7.5a4 4 0 0 1 8 0V11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+  </svg>
+  <h2>Access Denied</h2>
+  <p>{{ reason }}</p>
+  <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary btn-small">Back to Dashboard</a>
+</div>
+{% endblock %}

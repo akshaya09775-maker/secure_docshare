@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Share Document{% endblock %}
+{% block content %}
+<div class="page-header">
+  <span class="eyebrow">Document sharing</span>
+  <h1>Share "{{ doc.original_filename }}"</h1>
+  <p>Create a permission-based link for a specific recipient, accessible only during business hours.</p>
+</div>
+<div class="card">
+  <form method="POST">
+    <label>Share with</label>
+    <select name="recipient_id" required>
+      <option value="" disabled selected>Select a user</option>
+      {% for u in users %}
+      <option value="{{ u.id }}">{{ u.username }} ({{ u.email }}){% if u.id == current_user.id %} — yourself{% endif %}</option>
+      {% endfor %}
+    </select>
+
+    <label>Permission</label>
+    <select name="permission">
+      <option value="view">View only</option>
+      <option value="download">View + Download</option>
+    </select>
+
+    <label>Valid through (date)</label>
+    <input type="date" name="valid_until" required>
+    <p class="muted">
+      The link only opens between {{ business_hours_start }}:00 AM and {{ business_hours_end - 12 }}:00 PM
+      each day, up through the date above. Outside those hours, or after that date, it stops working.
+    </p>
+
+    <button type="submit" class="btn btn-primary">Generate Business-Hours Link</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}File Too Large{% endblock %}
+{% block content %}
+<div class="card center">
+  <svg class="page-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin: 0 auto 12px;">
+    <path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M4 7.5L12 12l8-4.5M12 12v9" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+  </svg>
+  <h2>File Too Large</h2>
+  <p>That file is bigger than the upload limit ({{ max_mb }} MB).</p>
+  <p class="muted">Try a smaller file, or ask the admin to raise <code>MAX_UPLOAD_MB</code>.</p>
+  <a href="{{ url_for('documents.upload') }}" class="btn btn-primary btn-small">Back to Upload</a>
+</div>
+{% endblock %}

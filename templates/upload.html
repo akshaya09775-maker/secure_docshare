@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Upload{% endblock %}
+{% block content %}
+<div class="page-header">
+  <span class="eyebrow">Documents</span>
+  <h1>Upload a Document</h1>
+  <p>Files are encrypted (AES via Fernet) before being written to disk.</p>
+</div>
+<div class="card">
+  <h2>Choose a file</h2>
+  <form method="POST" enctype="multipart/form-data">
+    <input type="file" name="document" required>
+    <button type="submit" class="btn btn-primary">Upload &amp; Encrypt</button>
+  </form>
+</div>
+{% endblock %}

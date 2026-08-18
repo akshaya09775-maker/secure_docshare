@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}History &amp; Logs{% endblock %}
+{% block content %}
+<div class="page-header">
+  <span class="eyebrow">Audit trail</span>
+  <h1>History &amp; Logs</h1>
+  <p>Every browsing attempt and shared-document access is recorded here.</p>
+</div>
+
+<div class="section-heading"><h2>Your Browsing History</h2></div>
+<div class="table-wrap">
+<table class="table">
+  <thead><tr><th>URL</th><th>Status</th><th>Reason</th><th>Time</th></tr></thead>
+  <tbody>
+    {% for h in browsing %}
+    <tr>
+      <td>{{ h.url }}</td>
+      <td>{% if h.status == 'allowed' %}<span class="badge badge-success">Allowed</span>{% else %}<span class="badge badge-danger">Blocked</span>{% endif %}</td>
+      <td>{{ h.reason }}</td>
+      <td>{{ h.timestamp.strftime('%Y-%m-%d %H:%M:%S') }} UTC</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="4" class="empty-row">No browsing history yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<div class="section-heading"><h2>Access Log for Documents You've Shared</h2></div>
+<div class="table-wrap">
+<table class="table">
+  <thead><tr><th>Document</th><th>Viewer</th><th>Action</th><th>IP</th><th>Time</th></tr></thead>
+  <tbody>
+    {% for a in access %}
+    <tr>
+      <td>{{ a.share.document.original_filename }}</td>
+      <td>{{ a.user.username if a.user else 'Unknown' }}</td>
+      <td>{{ a.action }}</td>
+      <td>{{ a.ip_address }}</td>
+      <td>{{ a.timestamp.strftime('%Y-%m-%d %H:%M:%S') }} UTC</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5" class="empty-row">No access events yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

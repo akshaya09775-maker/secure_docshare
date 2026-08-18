@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="auth-shell">
+  <div class="auth-brand">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.6"/>
+      <path d="M8 11V7.5a4 4 0 0 1 8 0V11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+    Secure DocShare
+  </div>
+  <div class="auth-card">
+    <h2>Sign in</h2>
+    <p class="muted">Access your workspace to manage documents and shared links.</p>
+    <form method="POST">
+      <label>Username</label>
+      <input type="text" name="username" required autofocus>
+      <label>Password</label>
+      <input type="password" name="password" required>
+      <button type="submit" class="btn btn-primary" style="width:100%;">Log In</button>
+    </form>
+    <p class="auth-switch">No account? <a href="{{ url_for('auth.register') }}">Register here</a></p>
+  </div>
+</div>
+{% endblock %}

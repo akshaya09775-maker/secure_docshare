@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Link Created{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>
+    <svg class="icon-inline" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/>
+      <path d="M8 12.5l2.5 2.5 5-5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Share Link Created
+  </h2>
+  <p><strong>Document:</strong> {{ doc.original_filename }}</p>
+  <p><strong>Recipient:</strong> {{ share.shared_with.username }}</p>
+  <p><strong>Permission:</strong> {{ share.permission }}</p>
+  <p><strong>Valid through:</strong> {{ share.expires_at.strftime('%Y-%m-%d') }} (last openable at {{ share.expires_at.strftime('%H:%M') }})</p>
+  <p><strong>Daily access window:</strong> 9:00 AM – 5:00 PM</p>
+
+  <label>Shareable link</label>
+  <input type="text" value="{{ share_url }}" readonly onclick="this.select()">
+
+  <p class="muted">This link only works for the account it was shared with, only opens between 9 AM and 5 PM each day, and stops working after the expiry date above — or immediately if you revoke it from the Dashboard.</p>
+
+  <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary btn-small">Back to Dashboard</a>
+</div>
+{% endblock %}
