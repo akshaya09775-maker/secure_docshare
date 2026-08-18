@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Secure Browser{% endblock %}
+{% block content %}
+<div class="page-header">
+  <span class="eyebrow">Secure browsing</span>
+  <h1>Secure Browser</h1>
+  <p>Every URL is validated (scheme check, blocklist check, raw-IP check) and logged before access is allowed.</p>
+</div>
+<div class="card">
+  <h2>
+    <svg class="icon-inline" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/>
+      <path d="M3.5 12h17M12 3.5c2.2 2.3 3.4 5.2 3.4 8.5s-1.2 6.2-3.4 8.5c-2.2-2.3-3.4-5.2-3.4-8.5S9.8 5.8 12 3.5Z" stroke="currentColor" stroke-width="1.6"/>
+    </svg>
+    Check a URL
+  </h2>
+  <form method="POST">
+    <label>URL</label>
+    <input type="text" name="url" placeholder="e.g. wikipedia.org" required>
+    <button type="submit" class="btn btn-primary">Check &amp; Open</button>
+  </form>
+
+  {% if result_url %}
+  <div class="browser-result">
+    <p><span class="badge badge-success">Passed validation</span></p>
+    <a href="{{ result_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-small btn-secondary">Open in new tab &rarr;</a>
+    <p class="muted">(Opened in a new tab rather than an embedded frame, since most modern sites block being embedded via X-Frame-Options — this is expected browser security behavior, not a bug in this project.)</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

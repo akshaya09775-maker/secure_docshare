@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="auth-shell">
+  <div class="auth-brand">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.6"/>
+      <path d="M8 11V7.5a4 4 0 0 1 8 0V11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+    Secure DocShare
+  </div>
+  <div class="auth-card">
+    <h2>Create your account</h2>
+    <p class="muted">Set up access for this internal pilot workspace.</p>
+    <form method="POST">
+      <label>Username</label>
+      <input type="text" name="username" required>
+      <label>Email</label>
+      <input type="email" name="email" required>
+      <label>Password (min 8 characters)</label>
+      <input type="password" name="password" required minlength="8">
+      <button type="submit" class="btn btn-primary" style="width:100%;">Register</button>
+    </form>
+    <p class="auth-switch">Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
+  </div>
+</div>
+{% endblock %}

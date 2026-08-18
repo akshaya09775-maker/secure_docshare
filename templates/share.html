@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Share Document{% endblock %}
+{% block content %}
+<div class="page-header">
+  <span class="eyebrow">Document sharing</span>
+  <h1>Share "{{ doc.original_filename }}"</h1>
+  <p>Create a permission-based, time-limited link for a specific recipient.</p>
+</div>
+<div class="card">
+  <form method="POST">
+    <label>Share with</label>
+    <select name="recipient_id" required>
+      <option value="" disabled selected>Select a user</option>
+      {% for u in users %}
+      <option value="{{ u.id }}">{{ u.username }} ({{ u.email }}){% if u.id == current_user.id %} — yourself{% endif %}</option>
+      {% endfor %}
+    </select>
+
+    <label>Permission</label>
+    <select name="permission">
+      <option value="view">View only</option>
+      <option value="download">View + Download</option>
+    </select>
+
+    <label>Link valid for</label>
+    <select name="expiry_choice" id="expiry_choice" onchange="document.getElementById('custom_wrap').style.display = this.value === 'custom' ? 'block' : 'none';">
+      {% for value, label in expiry_options %}
+      <option value="{{ value }}">{{ label }}</option>
+      {% endfor %}
+    </select>
+
+    <div id="custom_wrap" style="display:none;">
+      <label>Custom minutes</label>
+      <input type="number" name="custom_minutes" min="1" placeholder="e.g. 45">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Generate Time-Limited Link</button>
+  </form>
+</div>
+{% endblock %}

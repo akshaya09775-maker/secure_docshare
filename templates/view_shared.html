@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Viewing {{ doc.original_filename }}{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>
+    <svg class="icon-inline" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7 3h7l4 4v14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M14 3v4a1 1 0 0 0 1 1h4" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+    </svg>
+    {{ doc.original_filename }}
+  </h2>
+  <p><strong>Shared by:</strong> {{ share.shared_by.username }}</p>
+  <p><strong>Permission:</strong> {{ share.permission }}</p>
+  <p><strong>Expires:</strong> <span id="expiryTime" data-expiry="{{ share.expires_at.isoformat() }}Z">{{ share.expires_at.strftime('%Y-%m-%d %H:%M:%S') }} UTC</span></p>
+  <p id="countdown" class="muted"></p>
+
+  {% if share.permission == 'download' %}
+  <a href="{{ url_for('documents.download_shared', token=share.token) }}" class="btn btn-primary">Download</a>
+  {% else %}
+  <p class="muted">You have View-only access. Downloading is disabled for this share.</p>
+  {% endif %}
+
+  <p class="note">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.6"/>
+      <path d="M8 11V7.5a4 4 0 0 1 8 0V11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+    Every access to this link is logged (timestamp, IP, action) and visible to the document owner. Access is checked on the server on every request — this page does not grant lasting access.
+  </p>
+</div>
+
+<script>
+  const expiryEl = document.getElementById('expiryTime');
+  const countdownEl = document.getElementById('countdown');
+  const expiryTime = new Date(expiryEl.dataset.expiry).getTime();
+
+  function tick() {
+    const remaining = expiryTime - Date.now();
+    if (remaining <= 0) {
+      countdownEl.textContent = "This link has expired. Reload the page.";
+      return;
+    }
+    const mins = Math.floor(remaining / 60000);
+    const secs = Math.floor((remaining % 60000) / 1000);
+    countdownEl.textContent = `Time remaining: ${mins}m ${secs}s`;
+    setTimeout(tick, 1000);
+  }
+  tick();
+</script>
+{% endblock %}

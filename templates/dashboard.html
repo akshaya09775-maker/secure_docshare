@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+{% set ns = namespace(active_out=0, active_in=0) %}
+{% for s in shares_i_made %}{% if s.is_valid() %}{% set ns.active_out = ns.active_out + 1 %}{% endif %}{% endfor %}
+{% for s in shares_with_me %}{% if s.is_valid() %}{% set ns.active_in = ns.active_in + 1 %}{% endif %}{% endfor %}
+
+<div class="page-header">
+  <span class="eyebrow">Workspace overview</span>
+  <h1>Dashboard</h1>
+  <p>Documents, shared links, and access status for your account.</p>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-card-label">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 3h7l4 4v14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      My documents
+    </div>
+    <div class="stat-card-value">{{ my_docs | length }}</div>
+    <div class="stat-card-sub">Encrypted at rest</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-label">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M8 12.5l2.5 2.5 5-5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Active links shared
+    </div>
+    <div class="stat-card-value">{{ ns.active_out }}</div>
+    <div class="stat-card-sub">of {{ shares_i_made | length }} total</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-label">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      Active shared with me
+    </div>
+    <div class="stat-card-value">{{ ns.active_in }}</div>
+    <div class="stat-card-sub">of {{ shares_with_me | length }} total</div>
+  </div>
+</div>
+
+<div class="section-heading">
+  <h2>My Documents</h2>
+  <a href="{{ url_for('documents.upload') }}" class="btn btn-primary btn-small">+ Upload New Document</a>
+</div>
+<div class="table-wrap">
+<table class="table">
+  <thead><tr><th>File</th><th>Size</th><th>Uploaded</th><th>Actions</th></tr></thead>
+  <tbody>
+    {% for doc in my_docs %}
+    <tr>
+      <td>{{ doc.original_filename }}</td>
+      <td>{{ (doc.file_size / 1024) | round(1) }} KB</td>
+      <td>{{ doc.uploaded_at.strftime('%Y-%m-%d %H:%M') }} UTC</td>
+      <td><a href="{{ url_for('documents.share_document', doc_id=doc.id) }}" class="btn btn-small btn-secondary">Share</a></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="4" class="empty-row">No documents uploaded yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<div class="section-heading">
+  <h2>Links I've Shared</h2>
+</div>
+<div class="table-wrap">
+<table class="table">
+  <thead><tr><th>Document</th><th>With</th><th>Permission</th><th>Expires</th><th>Status</th><th>Action</th></tr></thead>
+  <tbody>
+    {% for s in shares_i_made %}
+    <tr>
+      <td>{{ s.document.original_filename }}</td>
+      <td>{{ s.shared_with.username }}</td>
+      <td>{{ s.permission }}</td>
+      <td>{{ s.expires_at.strftime('%Y-%m-%d %H:%M') }} UTC</td>
+      <td>
+        {% if s.revoked %}<span class="badge badge-danger">Revoked</span>
+        {% elif s.is_expired() %}<span class="badge badge-muted">Expired</span>
+        {% else %}<span class="badge badge-success">Active</span>{% endif %}
+      </td>
+      <td>
+        {% if s.is_valid() %}
+        <form method="POST" action="{{ url_for('documents.revoke_share', share_id=s.id) }}" onsubmit="return confirm('Revoke this link now?');">
+          <button type="submit" class="btn btn-small btn-danger">Revoke</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6" class="empty-row">You haven't shared anything yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<div class="section-heading">
+  <h2>Shared With Me</h2>
+</div>
+<div class="table-wrap">
+<table class="table">
+  <thead><tr><th>Document</th><th>From</th><th>Permission</th><th>Expires</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+    {% for s in shares_with_me %}
+    <tr>
+      <td>{{ s.document.original_filename }}</td>
+      <td>{{ s.shared_by.username }}</td>
+      <td>{{ s.permission }}</td>
+      <td>{{ s.expires_at.strftime('%Y-%m-%d %H:%M') }} UTC</td>
+      <td>
+        {% if s.revoked %}<span class="badge badge-danger">Revoked</span>
+        {% elif s.is_expired() %}<span class="badge badge-muted">Expired</span>
+        {% else %}<span class="badge badge-success">Active</span>{% endif %}
+      </td>
+      <td>{% if s.is_valid() %}<a href="{{ url_for('documents.view_shared', token=s.token) }}" class="btn btn-small btn-secondary">Open</a>{% endif %}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6" class="empty-row">Nothing has been shared with you yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}
